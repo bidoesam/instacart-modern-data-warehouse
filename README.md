@@ -1,4 +1,3 @@
-# instacart-modern-data-warehouse
 # Instacart Data Warehouse
 
 Welcome to the **Instacart Data Warehouse Project** 🚀.
