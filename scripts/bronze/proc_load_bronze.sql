@@ -1,19 +1,16 @@
-#/*
+/*
 ===============================================================================
- Stored Procedure: Load Bronze Layer (Source -> Bronze)
+Stored Procedure: Load Bronze Layer (Source -> Bronze)
 ===============================================================================
 Script Purpose:
     This stored procedure loads the Instacart source data from external CSV
     files into the 'bronze' schema.
 
-```
-It performs the following actions:
-- Truncates the Bronze tables before loading new data.
-- Uses BULK INSERT to load data from CSV files.
-- Records row counts, execution times, and load status.
-- Logs successful and failed loads in the 'etl.load_log' table.
-- Displays loading progress and errors for monitoring and troubleshooting.
-```
+    It performs the following actions:
+    - Truncates the bronze tables before loading data.
+    - Uses BULK INSERT to load data from CSV files.
+    - Records row counts, execution times, and load status.
+    - Logs load details and errors in the 'etl.load_log' table.
 
 Parameters:
     None.
@@ -23,7 +20,6 @@ Usage Example:
     EXEC bronze.load_bronze;
 ===============================================================================
 */
-
 
 CREATE OR ALTER PROCEDURE bronze.load_bronze AS
 BEGIN
