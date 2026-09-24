@@ -28,7 +28,7 @@ Whether you are exploring Data Warehousing concepts, Medallion Architecture, or 
 ## 🏗️ Architecture
 
 <p align="center">
-  <img src="docs/data_architecture.png" alt="Instacart DWH Architecture" width="1000">
+  <img src="docs/images/data_architecture.png" alt="Instacart DWH Architecture" width="1000">
 </p>
 
 This project implements a **Medallion Architecture** (Bronze → Silver → Gold) to transform raw Instacart source data into analytics-ready datasets.
