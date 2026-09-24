@@ -92,13 +92,19 @@ DECLARE @batch_id UNIQUEIDENTIFIER, @table_name VARCHAR(50), @rows_loaded BIGINT
 			order_id,
 			product_id,
 			add_to_cart_order,
-			reordered
+			reordered,
+			order_type
 		 )
 		 SELECT 
 			 order_id,
 			 product_id,
 			 add_to_cart_order,
-			 reordered
+			 reordered,
+			 CASE reordered
+				WHEN 1 THEN 'Reordered'
+				WHEN 0 THEN 'First Time'
+				ELSE 'n/a'
+			 END AS order_type
 		 FROM bronze.order_products_prior
 	   SET @end_time = GETDATE();
 		 SELECT @rows_loaded = COUNT(*) FROM silver.order_products_prior;
@@ -121,13 +127,19 @@ DECLARE @batch_id UNIQUEIDENTIFIER, @table_name VARCHAR(50), @rows_loaded BIGINT
 			order_id,
 			product_id,
 			add_to_cart_order,
-			reordered
+			reordered,
+			order_type
 		 )
 		 SELECT 
 			order_id,
 			product_id,
 			add_to_cart_order,
-	 		reordered
+	 		reordered,
+			CASE reordered
+				WHEN 1 THEN 'Reordered'
+				WHEN 0 THEN 'First Time'
+				ELSE 'n/a'
+		    END AS order_type
 		 FROM bronze.order_products_train;
 		SET @end_time = GETDATE();
 		 SELECT @rows_loaded = COUNT(*) FROM silver.order_products_train;
@@ -151,7 +163,9 @@ DECLARE @batch_id UNIQUEIDENTIFIER, @table_name VARCHAR(50), @rows_loaded BIGINT
 			eval_set,
 			order_number,
 			order_dow,
-			order_hour_of_day ,
+			order_day,
+			order_hour_of_day,
+			day_period,
 			days_since_prior_order
 		 )
 		 SELECT 
@@ -160,7 +174,23 @@ DECLARE @batch_id UNIQUEIDENTIFIER, @table_name VARCHAR(50), @rows_loaded BIGINT
 			LOWER(TRIM(eval_set)) AS eval_set,
 			order_number,
 			order_dow,
-			order_hour_of_day ,
+			CASE order_dow 
+				WHEN 0 THEN 'Sunday'
+				WHEN 1 THEN 'Monday'
+				WHEN 2 THEN 'Tuesday'
+				WHEN 3 THEN 'Wednesday'
+				WHEN 4 THEN 'Thursday'
+				WHEN 5 THEN 'Friday'
+				WHEN 6 THEN 'Saturday'
+			    ELSE 'n/a'
+			END AS order_day,
+			order_hour_of_day,
+		    CASE
+				WHEN order_hour_of_day BETWEEN 5 AND 11 THEN 'Morning'
+				WHEN order_hour_of_day BETWEEN 12 AND 16 THEN 'Afternoon'
+				WHEN order_hour_of_day BETWEEN 17 AND 20 THEN 'Evening'
+				ELSE 'Night'
+			END AS day_period,
 			days_since_prior_order
 		 FROM bronze.orders;
 	   SET @end_time = GETDATE();
@@ -211,7 +241,7 @@ DECLARE @batch_id UNIQUEIDENTIFIER, @table_name VARCHAR(50), @rows_loaded BIGINT
 		SET @error_message = ERROR_MESSAGE();
 		INSERT INTO etl.load_log(batch_id, table_name, start_time, end_time, duration_ms, rows_loaded, status, error_message) VALUES (@batch_id, @table_name, @start_time, @end_time, DATEDIFF(MILLISECOND, @start_time, @end_time), NULL, @status, @error_message);
 		PRINT '===========================================';
-		PRINT 'ERROR OCCURRED DURING LOADING BRONZE LAYER';
+		PRINT 'ERROR OCCURRED DURING LOADING SILVER LAYER';
 		PRINT 'Table: ' + @table_name;
 		PRINT 'Error: ' + @error_message;
 		PRINT '===========================================';
@@ -219,5 +249,4 @@ DECLARE @batch_id UNIQUEIDENTIFIER, @table_name VARCHAR(50), @rows_loaded BIGINT
 	END CATCH
 END
 
-
-SELECT * FROM etl.load_log
+EXEC silver.load_silver;
