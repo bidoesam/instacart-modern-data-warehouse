@@ -1,93 +1,97 @@
 # Naming Conventions
 
-This document defines the naming standards used across the Data Warehouse project, including schemas, tables, columns, and stored procedures. Consistent naming improves readability, maintainability, and collaboration.
+This document defines the naming standards used across the Instacart Data Warehouse project, including schemas, views, columns, and stored procedures. Consistent naming improves readability, maintainability, and collaboration.
 
 ## Table of Contents
 
 1. [General Principles](#general-principles)
-2. [Table Naming Conventions](#table-naming-conventions)
-   - [Bronze Layer](#bronze-layer)
-   - [Silver Layer](#silver-layer)
-   - [Gold Layer](#gold-layer)
+2. [Object Naming Conventions](#object-naming-conventions)
+
+   * [Bronze Layer](#bronze-layer)
+   * [Silver Layer](#silver-layer)
+   * [Gold Layer](#gold-layer)
 3. [Column Naming Conventions](#column-naming-conventions)
-   - [Surrogate Keys](#surrogate-keys)
-   - [Technical Columns](#technical-columns)
+
+   * [Surrogate Keys](#surrogate-keys)
+   * [Technical Columns](#technical-columns)
 4. [Stored Procedure Naming Conventions](#stored-procedure-naming-conventions)
 
 ---
 
 ## General Principles
 
-- Use **snake_case** naming format.
-- Use **lowercase letters** only.
-- Separate words using underscores (`_`).
-- Use **English** for all object names.
-- Avoid SQL reserved keywords as object names.
-- Use clear and meaningful names that accurately describe the business entity.
+* Use **snake_case** naming format.
+* Use **lowercase letters** only.
+* Separate words using underscores (`_`).
+* Use **English** for all object names.
+* Avoid SQL reserved keywords as object names.
+* Use clear and meaningful names that accurately describe the business entity.
 
 ---
 
-## Table Naming Conventions
+## Object Naming Conventions
 
 ### Bronze Layer
 
-Bronze tables store raw data exactly as received from source systems.
+Bronze objects store raw data exactly as received from source files.
 
 #### Pattern
 
 ```text
-<sourcesystem>_<entity>
+<entity>
 ```
 
 #### Rules
 
-- Table names must begin with the source system name.
-- Table names should remain identical to the source table names whenever possible.
-- No business-driven renaming should occur in this layer.
+* Preserve source file naming whenever possible.
+* Store data with minimal transformation.
+* No business-driven renaming should occur in this layer.
 
 #### Examples
 
-| Table Name |
-|------------|
-| crm_cust_info |
-| crm_prd_info |
-| crm_sales_details |
-| erp_cust_az12 |
-| erp_loc_a101 |
+| Object Name          |
+| -------------------- |
+| aisles               |
+| departments          |
+| products             |
+| orders               |
+| order_products_prior |
+| order_products_train |
 
 ---
 
 ### Silver Layer
 
-Silver tables contain cleansed, standardized, and transformed data.
+Silver objects contain cleansed, standardized, and transformed data.
 
 #### Pattern
 
 ```text
-<sourcesystem>_<entity>
+<entity>
 ```
 
 #### Rules
 
-- Retain source system prefixes.
-- Preserve original table identity.
-- Apply transformations without changing naming conventions.
+* Preserve original object identity.
+* Apply transformations without unnecessary renaming.
+* Use business-friendly column names when deriving new attributes.
 
 #### Examples
 
-| Table Name |
-|------------|
-| crm_cust_info |
-| crm_prd_info |
-| crm_sales_details |
-| erp_cust_az12 |
-| erp_loc_a101 |
+| Object Name          |
+| -------------------- |
+| aisles               |
+| departments          |
+| products             |
+| orders               |
+| order_products_prior |
+| order_products_train |
 
 ---
 
 ### Gold Layer
 
-Gold tables represent business-ready data models optimized for reporting and analytics.
+Gold views represent business-ready dimensional models optimized for reporting and analytics.
 
 #### Pattern
 
@@ -97,27 +101,26 @@ Gold tables represent business-ready data models optimized for reporting and ana
 
 #### Components
 
-- **category**: Identifies the table type.
-- **entity**: Business-oriented table name.
+* **category**: Identifies the view type.
+* **entity**: Business-oriented entity name.
 
 #### Examples
 
-| Table Name | Description |
-|------------|-------------|
-| dim_customers | Customer dimension |
-| dim_products | Product dimension |
-| fact_sales | Sales fact table |
-| report_sales_monthly | Monthly sales report |
+| View Name       | Description          |
+| --------------- | -------------------- |
+| dim_aisles      | Aisle dimension      |
+| dim_departments | Department dimension |
+| dim_products    | Product dimension    |
+| fact_orders     | Orders fact view     |
 
 ---
 
 ### Category Glossary
 
-| Prefix | Meaning | Example |
-|----------|----------|----------|
-| dim_ | Dimension table | dim_customers |
-| fact_ | Fact table | fact_sales |
-| report_ | Reporting table | report_sales_monthly |
+| Prefix | Meaning        | Example      |
+| ------ | -------------- | ------------ |
+| dim_   | Dimension view | dim_products |
+| fact_  | Fact view      | fact_orders  |
 
 ---
 
@@ -125,7 +128,7 @@ Gold tables represent business-ready data models optimized for reporting and ana
 
 ### Surrogate Keys
 
-All dimension table primary keys must use the suffix `_key`.
+All dimension surrogate keys must use the suffix `_key`.
 
 #### Pattern
 
@@ -135,11 +138,33 @@ All dimension table primary keys must use the suffix `_key`.
 
 #### Examples
 
-| Column Name |
-|-------------|
-| customer_key |
-| product_key |
-| sales_key |
+| Column Name    |
+| -------------- |
+| aisle_key      |
+| department_key |
+| product_key    |
+
+---
+
+### Source Identifiers
+
+Business/source identifiers must use the suffix `_id`.
+
+#### Pattern
+
+```text
+<entity>_id
+```
+
+#### Examples
+
+| Column Name   |
+| ------------- |
+| aisle_id      |
+| department_id |
+| product_id    |
+| order_id      |
+| user_id       |
 
 ---
 
@@ -155,11 +180,9 @@ dwh_<column_name>
 
 #### Examples
 
-| Column Name | Description |
-|-------------|-------------|
+| Column Name     | Description               |
+| --------------- | ------------------------- |
 | dwh_create_date | Record creation timestamp |
-| dwh_load_date | Data load date |
-| dwh_update_date | Record update timestamp |
 
 ---
 
@@ -175,11 +198,10 @@ load_<layer>
 
 #### Examples
 
-| Procedure Name | Description |
-|----------------|-------------|
-| load_bronze | Loads data into the Bronze layer |
-| load_silver | Loads data into the Silver layer |
-| load_gold | Loads data into the Gold layer |
+| Procedure Name | Description                                      |
+| -------------- | ------------------------------------------------ |
+| load_bronze    | Loads source data into the Bronze layer          |
+| load_silver    | Cleans and transforms data into the Silver layer |
 
 ---
 
@@ -191,31 +213,56 @@ load_<layer>
 bronze
 silver
 gold
+etl
 ```
 
-### Tables
+### Bronze Objects
 
 ```text
-bronze.crm_cust_info
-bronze.crm_prd_info
-silver.crm_cust_info
-silver.crm_prd_info
-gold.dim_customers
+bronze.aisles
+bronze.departments
+bronze.products
+bronze.orders
+bronze.order_products_prior
+bronze.order_products_train
+```
+
+### Silver Objects
+
+```text
+silver.aisles
+silver.departments
+silver.products
+silver.orders
+silver.order_products_prior
+silver.order_products_train
+```
+
+### Gold Views
+
+```text
+gold.dim_aisles
+gold.dim_departments
 gold.dim_products
-gold.fact_sales
+gold.fact_orders
+```
+
+### Surrogate Keys
+
+```text
+aisle_key
+department_key
+product_key
 ```
 
 ### Technical Columns
 
 ```text
 dwh_create_date
-dwh_load_date
 ```
 
 ### Stored Procedures
 
 ```text
-bronze.load_bronze
-silver.load_silver
-gold.load_gold
+bronze.load
 ```
