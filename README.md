@@ -67,6 +67,7 @@ This project implements a **Medallion Architecture** (Bronze → Silver → Gold
 * Git & GitHub
 
 ---
+```text
 sql-data-warehouse-project/
 │
 ├── datasets/
