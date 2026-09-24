@@ -67,7 +67,47 @@ This project implements a **Medallion Architecture** (Bronze → Silver → Gold
 * Git & GitHub
 
 ---
+sql-data-warehouse-project/
+│
+├── datasets/
+│   └── README.md
+│
+├── docs/
+│   ├── images/
+│   │   ├── data_architecture.png
+│   │   ├── data_flow.png
+│   │   ├── integration_model.png
+│   │   └── data_model.png
+│   │
+│   ├── data_catalog.md
+│   └── naming_conventions.md
+│
+├── scripts/
+│   ├── init_database.sql
+│   │
+│   ├── bronze/
+│   │   ├── ddl_bronze.sql
+│   │   └── load_bronze.sql
+│   │
+│   ├── silver/
+│   │   ├── ddl_silver.sql
+│   │   └── load_silver.sql
+│   │
+│   ├── gold/
+│   │   ├── ddl_gold.sql
+│   │
+│   └── etl/
+│       └── create_load_log.sql
+│
+├── tests/
+│   ├── quality_checks_gold.sql
+│   └── quality_checks_silver.sql
+│
+├── .gitignore
+├── LICENSE
+└── README.md
 
+---
 ## 🛡️ License
 
 This project is licensed under the [MIT License](LICENSE). You are free to use, modify, and share this project with proper attribution.
