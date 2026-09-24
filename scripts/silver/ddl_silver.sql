@@ -42,6 +42,7 @@ CREATE TABLE silver.order_products_prior
 	product_id INT,
 	add_to_cart_order INT,
 	reordered INT,
+	order_type VARCHAR(50), 
 	dwh_create_date DATETIME2 DEFAULT GETDATE()
 );
 
@@ -55,6 +56,7 @@ CREATE TABLE silver.order_products_train
 	product_id INT,
 	add_to_cart_order INT,
 	reordered INT,
+	order_type VARCHAR(50), 
 	dwh_create_date DATETIME2 DEFAULT GETDATE()
 );
 
@@ -69,7 +71,9 @@ CREATE TABLE silver.orders
 	eval_set VARCHAR(100),
 	order_number INT,
 	order_dow INT,
+	order_day VARCHAR(50),
 	order_hour_of_day INT,
+	day_period VARCHAR(50),
 	days_since_prior_order FLOAT ,
 	dwh_create_date DATETIME2 DEFAULT GETDATE()
 );
