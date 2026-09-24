@@ -107,7 +107,7 @@ sql-data-warehouse-project/
 ├── .gitignore
 ├── LICENSE
 └── README.md
-
+```
 ---
 ## 🛡️ License
 
